@@ -5,7 +5,7 @@ from app.models.users import User
 from app.utils.hashing import get_password_hash
 from sqlmodel import func,select 
 def get_all_users(*, session: Session, skip: int, limit: int):
-    count_statement= select(func.count()).select_from(User)
+    count_statement= select(func.count()).where(User.available==True).select_from(User)
     count= session.exec(count_statement).one()
     db_users= session.exec(select(User).where(User.available==True).order_by(User.full_name).offset(skip).limit(limit)).all()
     return {"users":db_users,
