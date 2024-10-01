@@ -1,7 +1,16 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from app.routes import users
+from contextlib import asynccontextmanager 
+from app.core.database import create_db_tables
+@asynccontextmanager
+async def lifeSpan(app:FastAPI):
+    create_db_tables()
+    yield
 
-app = FastAPI()
+app = FastAPI(lifespan= lifeSpan)
+
+app.include_router(users.router)
 
 # Lista para almacenar las conexiones WebSocket activas
 active_connections = []
